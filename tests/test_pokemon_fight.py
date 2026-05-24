@@ -1,0 +1,68 @@
+class FixedRandom:
+    def __init__(self, values):
+        self.values = list(values)
+
+    def randrange(self, start, stop=None):
+        return self.values.pop(0)
+
+    def random(self):
+        return 0.5
+
+def test_fight(charmander):
+    from model.fight import Fight
+    from model.pokemon import Pokemon
+    from model.combat_rules import CombatRules
+    from model.type_chart import TypeChart, TYPE_CHART
+
+    pokemon = Pokemon("Testmon","normal","",1000,1000,1000,1000,1000,1000,5000)
+    assert charmander.name =='Charmander'
+    
+    fixed_rng = FixedRandom([
+        0,   # iniciativa Testmon
+        0,   # iniciativa Charmander
+        50,  # tirada de suerte
+    ])
+    battle = Fight(pokemon, charmander,  rng=fixed_rng)
+    assert battle.get_fighter_one().name == 'Testmon'
+    assert battle.get_fighter_two().name == 'Charmander'
+
+    combat_rules = CombatRules(TypeChart(TYPE_CHART))
+    assert combat_rules.calculate_base_damage(pokemon,charmander) == 963.5
+    assert combat_rules.calculate_base_damage(charmander,pokemon) == 1
+    
+    result = battle.play_turn()
+    assert len(result) > 0
+    assert battle.winner().name == "Testmon"
+    assert charmander.get_hp() == 0
+
+
+def test_play_turn_allows_both_pokemon_to_attack(charmander, squirtle):
+    from model.fight import Fight
+
+    battle = Fight(charmander, squirtle)
+
+    initial_charmander_hp = charmander.get_hp()
+    initial_squirtle_hp = squirtle.get_hp()
+
+    events = battle.play_turn(player_luck=0, opponent_luck=0)
+
+    assert len(events) == 2
+    assert (
+        charmander.get_hp() < initial_charmander_hp
+        or squirtle.get_hp() < initial_squirtle_hp
+    )
+
+
+def test_second_pokemon_does_not_attack_if_defeated(charmander):
+    from model.fight import Fight
+    from model.pokemon import Pokemon
+
+    testmon = Pokemon("Testmon","normal","",1000,1000,1000,1000,1000,1000,5000)
+
+    battle = Fight(testmon, charmander)
+
+    events = battle.play_turn(player_luck=0, opponent_luck=0)
+
+    assert len(events) == 1
+    assert charmander.is_alive() is False
+    assert battle.winner().get_name() == "Testmon"

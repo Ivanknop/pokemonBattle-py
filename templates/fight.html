@@ -1,0 +1,135 @@
+{% include 'header.html' %}
+
+{% if finished %}
+    <section class="winner-banner">
+        Ganador: {{ winner }} Pokémon ({{ winner_role }})
+    </section>
+{% endif %}
+
+<h1>Batalla Pokémon</h1>
+
+<section class="battle-container">
+    <div class="pokemon-card">
+        <h2>{{ fighter_one.name }}</h2>
+
+        <p>
+            Tipo: {{ fighter_one.type1 }}
+            {% if fighter_one.type2 %}/ {{ fighter_one.type2 }}{% endif %}
+        </p>
+
+        <div class="hp-box">
+            <span class="hp-label">HP</span>
+            <span class="hp-value">{{ fighter_one.hp | round | int }}</span>
+        </div>
+    </div>
+
+    <div class="versus">VS</div>
+
+    <div class="pokemon-card">
+        <h2>{{ fighter_two.name }}</h2>
+
+        <p>
+            Tipo: {{ fighter_two.type1 }}
+            {% if fighter_two.type2 %}/ {{ fighter_two.type2 }}{% endif %}
+        </p>
+
+        <div class="hp-box">
+            <span class="hp-label">HP</span>
+            <span class="hp-value">{{ fighter_two.hp | round | int }}</span>
+        </div>
+    </div>
+</section>
+
+{% if not finished %}
+    <section class="luck-panel">
+        <h3>Suerte del turno</h3>
+
+        <div class="current-luck">
+            <div>
+                <span class="luck-label">Jugador</span>
+                <span class="luck-value">{{ player_luck }}</span>
+            </div>
+
+            <div>
+                <span class="luck-label">Rival</span>
+                <span class="luck-value">{{ opponent_luck }}</span>
+            </div>
+        </div>
+
+        {% if pending_player_luck is not none %}
+            <div class="pending-luck">
+                <h4>Nueva tirada</h4>
+
+                <div class="current-luck">
+                    <div>
+                        <span class="luck-label">Jugador</span>
+                        <span class="luck-value">{{ pending_player_luck }}</span>
+                    </div>
+
+                    <div>
+                        <span class="luck-label">Rival</span>
+                        <span class="luck-value">{{ pending_opponent_luck }}</span>
+                    </div>
+                </div>
+
+                <div class="luck-actions">
+                    <form action="{{ url_for('accept_luck') }}" method="post">
+                        <button type="submit" class="luck-button accept-luck">
+                            Aceptar nueva suerte
+                        </button>
+                    </form>
+
+                    <form action="{{ url_for('reject_luck') }}" method="post">
+                        <button type="submit" class="luck-button reject-luck">
+                            Quedarme con la suerte actual
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        {% elif not luck_used_this_turn %}
+            <form action="{{ url_for('roll_luck') }}" method="post">
+                <button type="submit" class="luck-button roll-luck">
+                    Tirar suerte
+                </button>
+            </form>
+
+        {% else %}
+            <p class="luck-used-message">
+                Ya usaste la tirada de suerte este turno.
+            </p>
+        {% endif %}
+    </section>
+{% endif %}
+
+{% if finished %}
+    <section class="winner-box">
+        <h2>Vencedor: {{ winner }}</h2>
+
+        <a href="{{ url_for('choose_character') }}" class="button-chose-character">
+            Nueva batalla
+        </a>
+    </section>
+{% else %}
+    <form action="{{ url_for('next_turn') }}" method="post" class="next-turn-form">
+        <button type="submit" class="button-chose-character">
+            Nuevo turno
+        </button>
+    </form>
+{% endif %}
+
+<section class="battle-events">
+    <h3>Historial de batalla</h3>
+
+    {% if events %}
+        <ul>
+            {% for event in events %}
+                <li>{{ event }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>La batalla está por comenzar.</p>
+    {% endif %}
+</section>
+
+{% include 'footer.html' %}

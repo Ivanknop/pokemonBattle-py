@@ -1,0 +1,30 @@
+{% include 'header.html' %}
+
+    <H1 class="h1">ELIJA A SU POKEMON Y PREPARESE PARA PELEAR</H1>
+    <div class="local-form">
+    <form action="{{ url_for('start_fight') }}" method="get" class="select_pokemon">
+    <table class="table bg-info">
+        <tr>
+            <th>
+                <h2 class="h2-pokemon">PERSONAJE PRINCIPAL</h4>
+            </th>
+        </tr>
+        <tr>
+            <td>
+                <label for="jugador">Elegí tu Pokémon</label>
+                <select name="jugador" id="jugador">
+                    {% for pokemon in pokemon_db %}
+                        <option value="{{ pokemon.name }}">
+                            {{ pokemon.name }} - {{ pokemon.type1 }}{% if pokemon.type2 %} / {{ pokemon.type2 }}{% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="button-chose-character">
+                    Elegir Pokémon
+                </button>
+            </td>
+        </tr>
+    </table>
+    </form>
+</div>
+{% include 'footer.html' %}

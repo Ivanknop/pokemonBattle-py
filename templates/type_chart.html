@@ -1,0 +1,49 @@
+{% include 'header.html' %}
+
+<h1>Tabla de tipos</h1>
+<section class="type-chart-legend">
+    <p><span class="legend-box type-high"></span> Súper efectivo</p>
+    <p><span class="legend-box type-low"></span> Poco efectivo</p>
+    <p><span class="legend-box type-none"></span> Sin efecto</p>
+    <p><span class="legend-box type-normal"></span> Normal</p>
+</section>
+<section class="type-chart-section">
+    <table class="type-chart-table">
+        <thead>
+            <tr>
+                <th>Ataque \ Defensa</th>
+                {% for defender_type in types %}
+                    <th>{{ defender_type }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for attacker_type in types %}
+                <tr>
+                    <th>{{ attacker_type }}</th>
+
+                    {% for defender_type in types %}
+                        {% set multiplier = type_chart.get(attacker_type, {}).get(defender_type, 1) %}
+
+                        <td class="
+                            {% if multiplier == 0 %}
+                                type-none
+                            {% elif multiplier < 1 %}
+                                type-low
+                            {% elif multiplier > 1 %}
+                                type-high
+                            {% else %}
+                                type-normal
+                            {% endif %}
+                        ">
+                            {{ multiplier }}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+{% include 'footer.html' %}
