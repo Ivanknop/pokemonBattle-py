@@ -13,8 +13,17 @@ def test_fight(charmander):
     from model.pokemon import Pokemon
     from model.combat_rules import CombatRules
     from model.type_chart import TypeChart, TYPE_CHART
-
-    pokemon = Pokemon("Testmon","normal","",1000,1000,1000,1000,1000,1000,5000)
+    pokemon_characteristics = {
+        "type1": "normal",
+        "type2": "",
+        "attack": 1000,
+        "defense": 1000,
+        "sp_attack": 1000,
+        "sp_defense": 1000, 
+        "speed": 1000,
+        "total": 5000
+    }        
+    pokemon = Pokemon("Testmon",1000, pokemon_characteristics)
     assert charmander.name =='Charmander'
     
     fixed_rng = FixedRandom([
@@ -27,7 +36,7 @@ def test_fight(charmander):
     assert battle.get_fighter_two().name == 'Charmander'
 
     combat_rules = CombatRules(TypeChart(TYPE_CHART))
-    assert combat_rules.calculate_base_damage(pokemon,charmander) == 963.5
+    assert combat_rules.calculate_base_damage(pokemon,charmander) == 954.9
     assert combat_rules.calculate_base_damage(charmander,pokemon) == 1
     
     result = battle.play_turn()
@@ -57,7 +66,17 @@ def test_second_pokemon_does_not_attack_if_defeated(charmander):
     from model.fight import Fight
     from model.pokemon import Pokemon
 
-    testmon = Pokemon("Testmon","normal","",1000,1000,1000,1000,1000,1000,5000)
+    pokemon_characteristics = {
+        "type1": "normal",
+        "type2": "",
+        "attack": 1000,
+        "defense": 1000,
+        "sp_attack": 1000,
+        "sp_defense": 1000,
+        "speed": 1000,
+        "total": 5000
+    }
+    testmon = Pokemon("Testmon", 1000, pokemon_characteristics)
 
     battle = Fight(testmon, charmander)
 

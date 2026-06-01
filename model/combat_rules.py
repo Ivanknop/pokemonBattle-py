@@ -11,10 +11,7 @@ class CombatRules:
         if type_multiplier == 0:
             return 0
 
-        offensive_power = attacker.attack * 0.6 + attacker.sp_attack * 0.4
-        defensive_power = defender.defense * 0.5 + defender.sp_defense * 0.3
-
-        raw_damage = offensive_power - defensive_power
+        raw_damage =attacker.offensive_power() - defender.defensive_power() 
 
         return max(1, raw_damage * type_multiplier)
 
@@ -39,11 +36,11 @@ class CombatRules:
 
         return max(1, round(damage, 2))
 
-    def initiative_score(self, pokemon, pokemon_luck):
-        return pokemon.speed + pokemon_luck
+    def initiative_score(self, pokemon, luck):
+        return pokemon.initiative() + luck
 
     def modified_speed(self, pokemon, pokemon_luck):
-        return pokemon.speed + pokemon_luck
+        return pokemon.get_characteristics()["speed"] + pokemon_luck
 
     def is_automatic_failure(self, pokemon_luck):
         return pokemon_luck == 1
