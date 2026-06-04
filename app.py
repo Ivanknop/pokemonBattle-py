@@ -1,11 +1,10 @@
 import traceback
 from flask import Flask, jsonify, render_template, request, session, redirect, url_for
 import model.handler_db as handler_db
-from model.fight import Fight
+from model.pokemon_fight import PokemonFight
 from model.pokemon import Pokemon
 from model.model import db, database_path
-from model.fight_plot import build_fight_comparison_chart
-from model.combat_rules import CombatRules
+from model.pokemon_combat_rules import PokemonCombatRules
 from model.type_chart import TypeChart, TYPE_CHART
 import random
 
@@ -207,7 +206,7 @@ def create_app():
     @app.route("/fight/luck", methods=["POST"])
     def roll_luck():
         try:
-            combat_rules = CombatRules(TypeChart(TYPE_CHART))
+            combat_rules = PokemonCombatRules(TypeChart(TYPE_CHART))
             luck_pair = combat_rules.roll_luck_pair(random)
 
             session["pending_player_luck"] = luck_pair["player_luck"]

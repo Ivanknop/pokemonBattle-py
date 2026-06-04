@@ -9,9 +9,9 @@ class FixedRandom:
         return 0.5
 
 def test_fight(charmander):
-    from model.fight import Fight
+    from model.pokemon_fight import PokemonFight
     from model.pokemon import Pokemon
-    from model.combat_rules import CombatRules
+    from model.pokemon_combat_rules import PokemonCombatRules
     from model.type_chart import TypeChart, TYPE_CHART
     pokemon_characteristics = {
         "type1": "normal",
@@ -31,11 +31,12 @@ def test_fight(charmander):
         0,   # iniciativa Charmander
         50,  # tirada de suerte
     ])
-    battle = Fight(pokemon, charmander,  rng=fixed_rng)
+    
+    combat_rules = PokemonCombatRules(TypeChart(TYPE_CHART))
+    battle = PokemonFight(pokemon, charmander,  rng=fixed_rng)
     assert battle.get_fighter_one().name == 'Testmon'
     assert battle.get_fighter_two().name == 'Charmander'
 
-    combat_rules = CombatRules(TypeChart(TYPE_CHART))
     assert combat_rules.calculate_base_damage(pokemon,charmander) == 954.9
     assert combat_rules.calculate_base_damage(charmander,pokemon) == 1
     
@@ -46,9 +47,9 @@ def test_fight(charmander):
 
 
 def test_play_turn_allows_both_pokemon_to_attack(charmander, squirtle):
-    from model.fight import Fight
+    from model.pokemon_fight import PokemonFight
 
-    battle = Fight(charmander, squirtle)
+    battle = PokemonFight(charmander, squirtle)
 
     initial_charmander_hp = charmander.get_hp()
     initial_squirtle_hp = squirtle.get_hp()
@@ -63,7 +64,7 @@ def test_play_turn_allows_both_pokemon_to_attack(charmander, squirtle):
 
 
 def test_second_pokemon_does_not_attack_if_defeated(charmander):
-    from model.fight import Fight
+    from model.pokemon_fight import PokemonFight
     from model.pokemon import Pokemon
 
     pokemon_characteristics = {
@@ -78,7 +79,7 @@ def test_second_pokemon_does_not_attack_if_defeated(charmander):
     }
     testmon = Pokemon("Testmon", 1000, pokemon_characteristics)
 
-    battle = Fight(testmon, charmander)
+    battle = PokemonFight(testmon, charmander)
 
     events = battle.play_turn(player_luck=0, opponent_luck=0)
 

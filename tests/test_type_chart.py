@@ -1,6 +1,5 @@
 def test_type_chart():
     from model.type_chart import TypeChart,  TYPE_CHART
-    from model.fight import Fight
 
     typeChart = TypeChart(TYPE_CHART)
     assert typeChart.multiplier("fire", "water") == 0.5
