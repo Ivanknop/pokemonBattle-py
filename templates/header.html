@@ -7,18 +7,19 @@
     <script src="https://kit.fontawesome.com/b27b674285.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}" type="text/css">
-    <title>SUPER POKEMON BATTLE</title>
+    <title>SUPER HERO BATTLE</title>
 </head>
 <body>
-    <h2>SUPER POKEMON BATTLE</h2>
-    <nav class="nav nav-tabs navbar-expand-lg navbar-dark nav-local"> <!--fixed-top deja la barra flotante-->      
-
+    <h2>SUPER HERO BATTLE</h2>
+    <nav class="nav nav-tabs navbar-expand-lg navbar-dark nav-local"> <!--fixed-top deja la barra flotante-->
+      
+        <li >
             <a class="nav-link " href="{{url_for('index')}}";">Inicio </a>
-
-            <a class="nav-link" href="{{url_for('type_chart')}}">Tabla de tipos </a>
-
-            <a class="nav-link" href="{{url_for('characters')}}">Pokemons Disponibles </a>
-
-            <a class="nav-link " href="{{url_for('choose_character')}}">Elegir Pokemon </a>
-    
+        </li>
+        <li >
+            <a class="nav-link" href="characters">Personajes Disponibles </a>
+        </li>
+        <li >
+            <a class="nav-link " href="choose_character">Elegir Personaje </a>
+        </li>
     </nav>
