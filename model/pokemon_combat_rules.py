@@ -27,6 +27,3 @@ class PokemonCombatRules(CombatRules):
             defender_luck,
         )
         return max(1, round(damage, 2))
-
-    def modified_speed(self, entity, luck):
-        return entity.characteristics["speed"] + luck
