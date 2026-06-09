@@ -1,3 +1,3 @@
-Flask
-Flask-SQLAlchemy
+flask
 pytest
+git+https://github.com/Ivanknop/battle-core.git

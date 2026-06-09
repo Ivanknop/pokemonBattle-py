@@ -5,16 +5,27 @@
     <table class="table bg-info">
         <thead cellpadding="1.0" cellspacing="1.0">
             <tr>
-                <th>Nombre</th>
-                <th>Poder Total</th>            
-                <th>Vida</th>
+                <th>Nombre</th>          
+                <th>Tipo 1</th>
+                <th>Tipo 2</th>
+                <th>HP</th>
+                <th>Attack</th>
+                <th>Defense</th>
+                <th>Special Attack</th> 
+                <th>Special Defense</th>
+                <th>Speed</th>
             </tr>
             {% for row in data %}
             <tr>
                 <td>{{row.get_name()}}</td>
-                <td>{{row.get_total_power()}}</td>
-                <td>{{row.get_life()}}</td>
-                
+                <td>{{row.get_principalType()}}</td>
+                <td>{{row.get_secondaryType()}}</td>
+                <td>{{row.get_hp()}}</td>
+                <td>{{row.get_attack()}}</td> 
+                <td>{{row.get_defense()}}</td>
+                <td>{{row.get_sp_attack()}}</td>
+                <td>{{row.get_sp_defense()}}</td>
+                <td>{{row.get_speed()}}</td>
             </tr>
             {% endfor %}
         </thead>
