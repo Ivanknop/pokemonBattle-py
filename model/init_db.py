@@ -2,7 +2,7 @@ import os
 import csv
 
 from app import create_app
-from model.model import db
+from model.pokemon_db import db
 from model.handler_db import insert_pokemon
 
 

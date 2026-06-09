@@ -54,7 +54,7 @@ def test_play_turn_allows_both_pokemon_to_attack(charmander, squirtle):
     initial_charmander_hp = charmander.get_hp()
     initial_squirtle_hp = squirtle.get_hp()
 
-    events = battle.play_turn(player_luck=0, opponent_luck=0)
+    events = battle.play_turn(attacker_luck=0, defender_luck=0)
 
     assert len(events) == 2
     assert (
@@ -81,7 +81,7 @@ def test_second_pokemon_does_not_attack_if_defeated(charmander):
 
     battle = PokemonFight(testmon, charmander)
 
-    events = battle.play_turn(player_luck=0, opponent_luck=0)
+    events = battle.play_turn(attacker_luck=0, defender_luck=0)
 
     assert len(events) == 1
     assert charmander.is_alive() is False

@@ -8,7 +8,7 @@ api_path = os.path.dirname(model_path)
 database_path = os.path.join(api_path, "files", "pokemon.db")
 
 
-class Pokemon(db.Model):
+class PokemonDB(db.Model):
     __tablename__ = "pokemon"
 
     id = db.Column(db.Integer, primary_key=True)

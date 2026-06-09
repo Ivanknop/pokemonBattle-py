@@ -1,8 +1,9 @@
-from model.model import db, Pokemon
+from model.pokemon_db import db, PokemonDB
+from model.pokemon import Pokemon
 import random
 
 def insert_pokemon(name, type1, type2, attack, defense, sp_attack, sp_defense, speed, hp,total):
-    a_pokemon = Pokemon(
+    a_pokemon = PokemonDB(
         name=name,
         type1=type1,
         type2=type2,
@@ -20,28 +21,41 @@ def insert_pokemon(name, type1, type2, attack, defense, sp_attack, sp_defense, s
     return a_pokemon
 
 def show(limit=0, offset=0):
-    query = Pokemon.query.order_by(Pokemon.name.asc())
+    query = PokemonDB.query.order_by(PokemonDB.name.asc())
     if limit > 0:
         query = query.limit(limit)
         if offset > 0:
             query = query.offset(offset)
-    return query.all()
+    return [_to_domain(p) for p in query.all()]
 
+def find_pokemon(name) -> Pokemon:
+    pokemon_db = PokemonDB.query.filter(PokemonDB.name == name).first()
+    return _to_domain(pokemon_db)
 
-def find_pokemon(name):
-    return Pokemon.query.filter(Pokemon.name == name).first()
+def _to_domain(pokemon_db):
+    characteristics = {
+        "type1": pokemon_db.get_principalType(),
+        "type2": pokemon_db.get_secondaryType(),
+        "attack": pokemon_db.get_attack(),
+        "defense": pokemon_db.get_defense(),
+        "sp_attack": pokemon_db.get_sp_attack(),
+        "sp_defense": pokemon_db.get_sp_defense(),
+        "speed": pokemon_db.get_speed(),
+        "total": pokemon_db.get_total(),
+    }
+    return Pokemon(pokemon_db.get_name(), pokemon_db.get_hp(), characteristics)
 
 def delete_pokemon(name):
-    pokemon = find_pokemon(name)
-    if pokemon is None:
+    pokemon_db = PokemonDB.query.filter(PokemonDB.name == name).first()
+    if pokemon_db is None:
         return False
-    db.session.delete(pokemon)
+    db.session.delete(pokemon_db)
     db.session.commit()
 
     return True
 
 def random_pokemon_excluding(name):
-    pokemons = Pokemon.query.filter(Pokemon.name != name).all()
+    pokemons = PokemonDB.query.filter(PokemonDB.name != name).all()
     if len(pokemons) == 0:
         return None
-    return random.choice(pokemons)
+    return _to_domain(random.choice(pokemons))

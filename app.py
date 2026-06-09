@@ -3,7 +3,7 @@ from flask import Flask, jsonify, render_template, request, session, redirect, u
 import model.handler_db as handler_db
 from model.pokemon_fight import PokemonFight
 from model.pokemon import Pokemon
-from model.model import db, database_path
+from model.pokemon_db import db, database_path
 from model.pokemon_combat_rules import PokemonCombatRules
 from model.type_chart import TypeChart, TYPE_CHART
 import random
@@ -13,13 +13,13 @@ def pokemon_to_session(pokemon):
         "name": pokemon.get_name(),
         "type1": pokemon.type1,
         "type2": pokemon.type2,
-        "attack": pokemon.attack,
-        "defense": pokemon.defense,
-        "sp_attack": pokemon.sp_attack,
-        "sp_defense": pokemon.sp_defense,
-        "speed": pokemon.speed,
+        "attack": pokemon.characteristics["attack"],
+        "defense": pokemon.characteristics["defense"],
+        "sp_attack": pokemon.characteristics["sp_attack"],
+        "sp_defense": pokemon.characteristics["sp_defense"],
+        "speed": pokemon.characteristics["speed"],
         "hp": pokemon.get_hp(),
-        "total": pokemon.total,
+        "total": pokemon.characteristics["total"],
     }
 
 
@@ -35,20 +35,6 @@ def pokemon_from_session(data):
         "total": data["total"],
     }
     return Pokemon(data["name"], data["hp"], characteristics)
-
-
-def convert_Pokemon_from_db(a_pokemon_db):
-    pokemon_chars = {
-        "type1": a_pokemon_db.get_principalType(),
-        "type2": a_pokemon_db.get_secondaryType(),
-        "attack": a_pokemon_db.get_attack(),
-        "defense": a_pokemon_db.get_defense(),
-        "sp_attack": a_pokemon_db.get_sp_attack(),
-        "sp_defense": a_pokemon_db.get_sp_defense(),
-        "speed": a_pokemon_db.get_speed(),
-    }
-    pokemon = Pokemon(a_pokemon_db.get_name(), a_pokemon_db.get_hp(), pokemon_chars)
-    return pokemon
 
 def create_app():
     app = Flask(__name__)
@@ -93,7 +79,6 @@ def create_app():
                 offset = int(offset_str)
 
             data = handler_db.show(limit=limit, offset=offset)
-            random.shuffle(data)
             return render_template("choose_character.html", pokemon_db=data)
 
         except Exception:
@@ -103,23 +88,18 @@ def create_app():
     def start_fight():
         try:
             name_character = request.args.get("jugador")
-
-            pokemon_db = handler_db.find_pokemon(name_character)
-            opponent_db = handler_db.random_pokemon_excluding(name_character)
-
-            a_pokemon = convert_Pokemon_from_db(pokemon_db)
-            opponent = convert_Pokemon_from_db(opponent_db)
-
+            a_pokemon = handler_db.find_pokemon(name_character)
+            opponent = handler_db.random_pokemon_excluding(name_character)
             session["fighter_one"] = pokemon_to_session(a_pokemon)
             session["fighter_two"] = pokemon_to_session(opponent)
             session["events"] = []
             session["finished"] = False
             session["winner"] = None
             session["winner_role"] = None
-            session["player_luck"] = 0
-            session["opponent_luck"] = 0
-            session["pending_player_luck"] = None
-            session["pending_opponent_luck"] = None
+            session["attacker_luck"] = 0
+            session["defender_luck"] = 0
+            session["pending_attacker_luck"] = None
+            session["pending_defender_luck"] = None
             session["luck_used_this_turn"] = False
             return redirect(url_for("fight_screen"))
 
@@ -146,10 +126,10 @@ def create_app():
                 finished=finished,
                 winner=winner,
                 winner_role=winner_role,
-                player_luck=session.get("player_luck", 0),
-                opponent_luck=session.get("opponent_luck", 0),
-                pending_player_luck=session.get("pending_player_luck"),
-                pending_opponent_luck=session.get("pending_opponent_luck"),
+                attacker_luck=session.get("attacker_luck", 0),
+                defender_luck=session.get("defender_luck", 0),
+                pending_attacker_luck=session.get("pending_attacker_luck"),
+                pending_defender_luck=session.get("pending_defender_luck"),
                 luck_used_this_turn=session.get("luck_used_this_turn", False),
             )
 
@@ -166,11 +146,11 @@ def create_app():
             fighter_one = pokemon_from_session(fighter_one_data)
             fighter_two = pokemon_from_session(fighter_two_data)
             battle = PokemonFight(fighter_one, fighter_two)
-            player_luck = int(session.get("player_luck", 0))
-            opponent_luck = int(session.get("opponent_luck", 0))
+            attacker_luck = int(session.get("attacker_luck", 0))
+            defender_luck = int(session.get("defender_luck", 0))
             result = battle.play_turn(
-                player_luck=player_luck,
-                opponent_luck=opponent_luck,
+                attacker_luck=attacker_luck,
+                defender_luck=defender_luck,
             )
             session["fighter_one"] = pokemon_to_session(fighter_one)
             session["fighter_two"] = pokemon_to_session(fighter_two)
@@ -186,10 +166,10 @@ def create_app():
                     session["winner_role"] = "Jugador"
                 else:
                     session["winner_role"] = "Rival"
-            session["player_luck"] = 0
-            session["opponent_luck"] = 0
-            session["pending_player_luck"] = None
-            session["pending_opponent_luck"] = None
+            session["attacker_luck"] = 0
+            session["defender_luck"] = 0
+            session["pending_attacker_luck"] = None
+            session["pending_defender_luck"] = None
             session["luck_used_this_turn"] = False
 
             return redirect(url_for("fight_screen"))
@@ -203,8 +183,8 @@ def create_app():
             combat_rules = PokemonCombatRules(TypeChart(TYPE_CHART))
             luck_pair = combat_rules.roll_luck_pair(random)
 
-            session["pending_player_luck"] = luck_pair["player_luck"]
-            session["pending_opponent_luck"] = luck_pair["opponent_luck"]
+            session["pending_attacker_luck"] = luck_pair["attacker_luck"]
+            session["pending_defender_luck"] = luck_pair["defender_luck"]
             session["luck_used_this_turn"] = True
             return redirect(url_for("fight_screen"))
 
@@ -214,8 +194,8 @@ def create_app():
     @app.route("/fight/luck/reject", methods=["POST"])
     def reject_luck():
         try:
-            session["pending_player_luck"] = None
-            session["pending_opponent_luck"] = None
+            session["pending_attacker_luck"] = None
+            session["pending_defender_luck"] = None
             return redirect(url_for("fight_screen"))
 
         except Exception:
@@ -223,11 +203,11 @@ def create_app():
     @app.route("/fight/luck/accept", methods=["POST"])
     def accept_luck():
         try:
-            session["player_luck"] = session.get("pending_player_luck", 0)
-            session["opponent_luck"] = session.get("pending_opponent_luck", 0)
+            session["attacker_luck"] = session.get("pending_attacker_luck", 0)
+            session["defender_luck"] = session.get("pending_defender_luck", 0)
 
-            session["pending_player_luck"] = None
-            session["pending_opponent_luck"] = None
+            session["pending_attacker_luck"] = None
+            session["pending_defender_luck"] = None
 
             return redirect(url_for("fight_screen"))
 

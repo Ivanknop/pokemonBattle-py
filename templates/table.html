@@ -21,11 +21,11 @@
                 <td>{{row.get_principalType()}}</td>
                 <td>{{row.get_secondaryType()}}</td>
                 <td>{{row.get_hp()}}</td>
-                <td>{{row.get_attack()}}</td> 
-                <td>{{row.get_defense()}}</td>
-                <td>{{row.get_sp_attack()}}</td>
-                <td>{{row.get_sp_defense()}}</td>
-                <td>{{row.get_speed()}}</td>
+                <td>{{row.get_characteristics()["attack"]}}</td> 
+                <td>{{row.get_characteristics()["defense"]}}</td>
+                <td>{{row.get_characteristics()["sp_attack"]}}</td>
+                <td>{{row.get_characteristics()["sp_defense"]}}</td>
+                <td>{{row.get_characteristics()["speed"]}}</td>
             </tr>
             {% endfor %}
         </thead>
