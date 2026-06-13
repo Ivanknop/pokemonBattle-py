@@ -43,7 +43,7 @@ def test_fight(charmander):
     result = battle.play_turn()
     assert len(result) > 0
     assert battle.winner().name == "Testmon"
-    assert charmander.get_hp() == 0
+    assert charmander.get_vitality() == 0
 
 
 def test_play_turn_allows_both_pokemon_to_attack(charmander, squirtle):
@@ -51,15 +51,15 @@ def test_play_turn_allows_both_pokemon_to_attack(charmander, squirtle):
 
     battle = PokemonFight(charmander, squirtle)
 
-    initial_charmander_hp = charmander.get_hp()
-    initial_squirtle_hp = squirtle.get_hp()
+    initial_charmander_hp = charmander.get_vitality()
+    initial_squirtle_hp = squirtle.get_vitality()
 
     events = battle.play_turn(attacker_luck=0, defender_luck=0)
 
     assert len(events) == 2
     assert (
-        charmander.get_hp() < initial_charmander_hp
-        or squirtle.get_hp() < initial_squirtle_hp
+        charmander.get_vitality() < initial_charmander_hp
+        or squirtle.get_vitality() < initial_squirtle_hp
     )
 
 

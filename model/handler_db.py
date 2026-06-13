@@ -43,7 +43,7 @@ def _to_domain(pokemon_db):
         "speed": pokemon_db.get_speed(),
         "total": pokemon_db.get_total(),
     }
-    return Pokemon(pokemon_db.get_name(), pokemon_db.get_hp(), characteristics)
+    return Pokemon(pokemon_db.get_name(), pokemon_db.get_vitality(), characteristics)
 
 def delete_pokemon(name):
     pokemon_db = PokemonDB.query.filter(PokemonDB.name == name).first()

@@ -47,7 +47,7 @@ class PokemonDB(db.Model):
     def get_sp_defense(self):
         return self.sp_defense
 
-    def get_hp(self):
+    def get_vitality(self):
         return self.hp
     def get_total(self):
         return self.total

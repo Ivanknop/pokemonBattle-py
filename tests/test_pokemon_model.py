@@ -8,7 +8,7 @@ def test_pokemon_has_expected_characteristics(pikachu):
     assert characteristics["sp_attack"] == 50
     assert characteristics["sp_defense"] == 50
     assert characteristics["speed"] == 90
-    assert pikachu.get_hp() == 35
+    assert pikachu.get_vitality() == 35
     assert characteristics["total"] == 320
 
 
@@ -36,4 +36,4 @@ def test_pokemon_calculates_total_when_missing():
     assert pokemon.get_characteristics()["sp_attack"] == 30
     assert pokemon.get_characteristics()["sp_defense"] == 40
     assert pokemon.get_characteristics()["speed"] == 50
-    assert pokemon.get_hp() == 1000
+    assert pokemon.get_vitality() == 1000

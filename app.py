@@ -18,7 +18,7 @@ def pokemon_to_session(pokemon):
         "sp_attack": pokemon.characteristics["sp_attack"],
         "sp_defense": pokemon.characteristics["sp_defense"],
         "speed": pokemon.characteristics["speed"],
-        "hp": pokemon.get_hp(),
+        "hp": pokemon.get_vitality(),
         "total": pokemon.characteristics["total"],
     }
 
