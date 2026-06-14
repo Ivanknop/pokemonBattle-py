@@ -38,9 +38,6 @@ def test_pokemon_calculates_total_when_missing():
     assert pokemon.get_characteristics()["speed"] == 50
     assert pokemon.get_vitality() == 1000
 
-
-
-
 def test_round_trip_preserves_state(pikachu):
     from model.pokemon import Pokemon
     pikachu_dict = pikachu.to_dict()

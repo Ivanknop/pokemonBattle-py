@@ -3,7 +3,7 @@ import csv
 
 from app import create_app
 from model.pokemon_db import db
-from model.handler_db import insert_pokemon
+from pokemonBattle.api.model.handler_data import insert_pokemon
 
 
 script_path = os.path.dirname(os.path.realpath(__file__))

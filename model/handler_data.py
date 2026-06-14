@@ -2,7 +2,7 @@ from model.pokemon_db import db, PokemonDB
 from model.pokemon import Pokemon
 import random
 
-def insert_pokemon(name, type1, type2, attack, defense, sp_attack, sp_defense, speed, hp,total):
+def insert_entity(name, type1, type2, attack, defense, sp_attack, sp_defense, speed, hp,total):
     a_pokemon = PokemonDB(
         name=name,
         type1=type1,
@@ -20,7 +20,7 @@ def insert_pokemon(name, type1, type2, attack, defense, sp_attack, sp_defense, s
 
     return a_pokemon
 
-def show(limit=0, offset=0):
+def show_entities(limit=0, offset=0):
     query = PokemonDB.query.order_by(PokemonDB.name.asc())
     if limit > 0:
         query = query.limit(limit)
@@ -28,7 +28,7 @@ def show(limit=0, offset=0):
             query = query.offset(offset)
     return [_to_domain(p) for p in query.all()]
 
-def find_pokemon(name) -> Pokemon:
+def find_entity(name) -> Pokemon:
     pokemon_db = PokemonDB.query.filter(PokemonDB.name == name).first()
     return _to_domain(pokemon_db)
 
@@ -45,7 +45,7 @@ def _to_domain(pokemon_db):
     }
     return Pokemon(pokemon_db.get_name(), pokemon_db.get_vitality(), characteristics)
 
-def delete_pokemon(name):
+def delete_entity(name):
     pokemon_db = PokemonDB.query.filter(PokemonDB.name == name).first()
     if pokemon_db is None:
         return False
@@ -54,7 +54,7 @@ def delete_pokemon(name):
 
     return True
 
-def random_pokemon_excluding(name):
+def random_entity_excluding(name):
     pokemons = PokemonDB.query.filter(PokemonDB.name != name).all()
     if len(pokemons) == 0:
         return None

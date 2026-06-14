@@ -11,8 +11,8 @@
         </tr>
         <tr>
             <td>
-                <label for="jugador">Elegí tu Pokémon</label>
-                <select name="jugador" id="jugador">
+                <label for="player">Elegí tu Pokémon</label>
+                <select name="player" id="player">
                     {% for pokemon in pokemon_db %}
                         <option value="{{ pokemon.name }}">
                             {{ pokemon.name }} - {{ pokemon.type1 }}{% if pokemon.type2 %} / {{ pokemon.type2 }}{% endif %}
