@@ -8,34 +8,6 @@ from model.pokemon_combat_rules import PokemonCombatRules
 from model.type_chart import TypeChart, TYPE_CHART
 import random
 
-def pokemon_to_session(pokemon):
-    return {
-        "name": pokemon.get_name(),
-        "type1": pokemon.type1,
-        "type2": pokemon.type2,
-        "attack": pokemon.characteristics["attack"],
-        "defense": pokemon.characteristics["defense"],
-        "sp_attack": pokemon.characteristics["sp_attack"],
-        "sp_defense": pokemon.characteristics["sp_defense"],
-        "speed": pokemon.characteristics["speed"],
-        "hp": pokemon.get_vitality(),
-        "total": pokemon.characteristics["total"],
-    }
-
-
-def pokemon_from_session(data):
-    characteristics = {
-        "type1": data["type1"],
-        "type2": data["type2"],
-        "attack": data["attack"],
-        "defense": data["defense"],
-        "sp_attack": data["sp_attack"],
-        "sp_defense": data["sp_defense"],
-        "speed": data["speed"],
-        "total": data["total"],
-    }
-    return Pokemon(data["name"], data["hp"], characteristics)
-
 def create_app():
     app = Flask(__name__)
     app.secret_key ="pokemon-secret"
@@ -90,8 +62,8 @@ def create_app():
             name_character = request.args.get("jugador")
             a_pokemon = handler_db.find_pokemon(name_character)
             opponent = handler_db.random_pokemon_excluding(name_character)
-            session["fighter_one"] = pokemon_to_session(a_pokemon)
-            session["fighter_two"] = pokemon_to_session(opponent)
+            session["fighter_one"] = a_pokemon.to_dict()
+            session["fighter_two"] = opponent.to_dict()
             session["events"] = []
             session["finished"] = False
             session["winner"] = None
@@ -143,8 +115,8 @@ def create_app():
             fighter_two_data = session.get("fighter_two")
             if fighter_one_data is None or fighter_two_data is None:
                 return redirect(url_for("choose_character"))
-            fighter_one = pokemon_from_session(fighter_one_data)
-            fighter_two = pokemon_from_session(fighter_two_data)
+            fighter_one = Pokemon.from_dict(fighter_one_data)
+            fighter_two = Pokemon.from_dict(fighter_two_data)
             battle = PokemonFight(fighter_one, fighter_two)
             attacker_luck = int(session.get("attacker_luck", 0))
             defender_luck = int(session.get("defender_luck", 0))
@@ -152,8 +124,8 @@ def create_app():
                 attacker_luck=attacker_luck,
                 defender_luck=defender_luck,
             )
-            session["fighter_one"] = pokemon_to_session(fighter_one)
-            session["fighter_two"] = pokemon_to_session(fighter_two)
+            session["fighter_one"] = fighter_one.to_dict()
+            session["fighter_two"] = fighter_two.to_dict()
             events = session.get("events", [])
             for event in reversed(result):
                 events.insert(0, event)

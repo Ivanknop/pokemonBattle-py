@@ -22,5 +22,8 @@ class Pokemon(Entity):
     def get_secondaryType(self):
         return self.type2
     
-    def get_hp(self):
-        return self.get_vitality()
+    @classmethod
+    def from_dict(cls, data):
+        pokemon = cls(data["name"], data["vitality"],data["characteristics"])
+        pokemon.set_vitality(data["vitality"])
+        return pokemon
